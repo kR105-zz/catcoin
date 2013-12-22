@@ -281,12 +281,11 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
         case Language:
             settings.setValue("language", value);
             break;
-        case CoinControlFeatures: {
+        case CoinControlFeatures:
             fCoinControlFeatures = value.toBool();
             settings.setValue("fCoinControlFeatures", fCoinControlFeatures);
             emit coinControlFeaturesChanged(fCoinControlFeatures);
-        }
-        break;
+			break;
         default:
             break;
         }
@@ -300,9 +299,3 @@ qint64 OptionsModel::getTransactionFee()
 {
     return nTransactionFee;
 }
-
-bool OptionsModel::getCoinControlFeatures()
-{
-    return fCoinControlFeatures;
-}
-

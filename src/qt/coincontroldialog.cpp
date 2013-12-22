@@ -1,17 +1,16 @@
 #include "coincontroldialog.h"
 #include "ui_coincontroldialog.h"
 
-#include "init.h"
-#include "bitcoinunits.h"
-#include "walletmodel.h"
 #include "addresstablemodel.h"
-#include "optionsmodel.h"
+#include "bitcoinunits.h"
 #include "guiutil.h"
+#include "init.h"
+#include "optionsmodel.h"
+#include "walletmodel.h"
 #include "coincontrol.h"
 
 #include <QApplication>
 #include <QCheckBox>
-#include <QClipboard>
 #include <QColor>
 #include <QCursor>
 #include <QDateTime>
@@ -96,7 +95,11 @@ CoinControlDialog::CoinControlDialog(QWidget *parent) :
     connect(ui->treeWidget, SIGNAL(itemChanged( QTreeWidgetItem*, int)), this, SLOT(viewItemChanged( QTreeWidgetItem*, int)));
     
     // click on header
+#if QT_VERSION < 0x050000
     ui->treeWidget->header()->setClickable(true);
+#else
+    ui->treeWidget->header()->setSectionsClickable(true);
+#endif
     connect(ui->treeWidget->header(), SIGNAL(sectionClicked(int)), this, SLOT(headerSectionClicked(int)));
     
     // ok button
