@@ -1,6 +1,6 @@
 TEMPLATE = app
-TARGET = litecoin-qt
-macx:TARGET = "Litecoin-Qt"
+TARGET = catcoin-qt
+macx:TARGET = "Catcoin-Qt"
 VERSION = 0.8.6.1
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
@@ -319,7 +319,7 @@ SOURCES += src/qt/test/test_main.cpp \
 HEADERS += src/qt/test/uritests.h
 DEPENDPATH += src/qt/test
 QT += testlib
-TARGET = litecoin-qt_test
+TARGET = catcoin-qt_test
 DEFINES += BITCOIN_QT_TEST
   macx: CONFIG -= app_bundle
 }
