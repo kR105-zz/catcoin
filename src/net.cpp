@@ -1311,7 +1311,7 @@ void ThreadOpenConnections()
         boost::this_thread::interruption_point();
 
         // Add seed nodes if no other seed source is working
-        if (addrman.size() < 2 && (GetTime() - nStart > 15) && !fTestNet)
+        if (addrman.size() < 2 && (GetTime() - nStart > 5) && !fTestNet)
         {
             std::vector<CAddress> vAdd;
             for (unsigned int i = 0; i < ARRAYLEN(pnSeed); i++)
