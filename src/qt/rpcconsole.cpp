@@ -339,6 +339,7 @@ void RPCConsole::setNumBlocks(int count, int countOfPeers)
     ui->numberOfBlocks->setText(QString::number(count));
     // If there is no current countOfPeers available display N/A instead of 0, which can't ever be true
     ui->totalBlocks->setText(countOfPeers == 0 ? tr("N/A") : QString::number(countOfPeers));
+	ui->globalHashrate->setText(GetFormattedNetworkHashPS().c_str());
     if(clientModel)
         ui->lastBlockTime->setText(clientModel->getLastBlockDate().toString());
 }

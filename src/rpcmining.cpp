@@ -1,5 +1,6 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2013 The Catcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -49,6 +50,30 @@ Value GetNetworkHashPS(int lookup, int height) {
     int64 timeDiff = maxTime - minTime;
 
     return (boost::int64_t)(workDiff.getdouble() / timeDiff);
+}
+
+std::string roundTwo(double number) {
+	std::ostringstream ss;
+	ss << std::fixed << std::setprecision(2);
+	ss << number;
+	return ss.str();
+}
+std::string GetFormattedNetworkHashPS() {
+	double hashPs = (GetNetworkHashPS(120, -1).get_int64() / 1000);
+
+	if(hashPs < 1000)
+		return roundTwo(hashPs) + " kH/s";
+	
+	hashPs /= 1000;
+	if(hashPs < 1000)
+		return roundTwo(hashPs) + " MH/s";
+
+	hashPs /= 1000;
+	if(hashPs < 1000)
+		return roundTwo(hashPs) + " GH/s";
+
+	hashPs /= 1000;
+	return roundTwo(hashPs) + " TH/s";
 }
 
 Value getnetworkhashps(const Array& params, bool fHelp)
