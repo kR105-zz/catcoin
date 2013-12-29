@@ -1,3 +1,8 @@
+0.8.6.2 changes
+=============
+
+- Catcoin fork and rebranding
+
 0.8.6.1 changes
 =============
 

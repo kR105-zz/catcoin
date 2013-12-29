@@ -15,7 +15,7 @@ SplashScreen::SplashScreen(const QPixmap &pixmap, Qt::WindowFlags f) :
     int line1 =  0;
     int line2 = 13;
     int line3 = 26;
-	int line4 = 39;
+	int line4 = 42;
 
     float fontFactor            = 1.0;
 
