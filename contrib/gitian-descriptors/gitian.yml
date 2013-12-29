@@ -7,8 +7,8 @@ architectures:
 - "amd64"
 packages: 
 - "libdb4.8++-dev"
-- "qt4-qmake"
-- "libqt4-dev"
+- "qt5-qmake"
+- "libqt5-dev"
 - "libboost-system-dev"
 - "libboost-filesystem-dev"
 - "libboost-program-options-dev"
