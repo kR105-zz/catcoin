@@ -5,7 +5,7 @@ http://www.catcoin.pw
 
 Copyright (c) 2009-2013 Bitcoin Developers
 Copyright (c) 2011-2013 Litecoin Developers
-Copyright (c) 2013 Catcoin Developers
+Copyright (c) 2013-2014 Catcoin Developers
 
 What is Catcoin?
 ----------------
@@ -16,7 +16,7 @@ blockchain parameters as Bitcoin:
  - 10 minutes block targets
  - Subsidy halves in 210k blocks
  - 21 million total coins
- - 2016 blocks to retarget difficulty
+ - 36 blocks to retarget difficulty
 
 For more information, as well as an immediately useable, binary version of
 the Catcoin client sofware, see http://www.catcoin.pw.

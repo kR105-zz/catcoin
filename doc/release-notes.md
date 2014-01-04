@@ -1,3 +1,8 @@
+0.8.7 changes
+=============
+
+- Hard for at block 20,290 to change retarget interval to 36 blocks and reset difficulty to 16
+
 0.8.6.2 changes
 =============
 
