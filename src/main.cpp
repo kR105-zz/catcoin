@@ -1112,6 +1112,7 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     int64 nTargetTimespanLocal = 0;
     int64 nIntervalLocal = 0;
     int forkBlock = 20290 - 1;
+    int fork2Block = 20999; // Um yeah, make this a little more general - hozer
 
     unsigned int nProofOfWorkLimit = bnProofOfWorkLimit.GetCompact();
 
@@ -1136,27 +1137,30 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
         nIntervalLocal = nInterval;
     }
 
-    // Only change once per interval
-    if ((pindexLast->nHeight+1) % nIntervalLocal != 0)
-    {
-        // Special difficulty rule for testnet:
-        if (fTestNet)
+    // after fork2Block we retarget every block   
+    if(pindexLast->nHeight < fork2Block){
+        // Only change once per interval
+        if ((pindexLast->nHeight+1) % nIntervalLocal != 0)
         {
-            // If the new block's timestamp is more than 2* 10 minutes
-            // then allow mining of a min-difficulty block.
-            if (pblock->nTime > pindexLast->nTime + nTargetSpacing*2)
-                return nProofOfWorkLimit;
-            else
+            // Special difficulty rule for testnet:
+            if (fTestNet)
             {
-                // Return the last non-special-min-difficulty-rules-block
-                const CBlockIndex* pindex = pindexLast;
-                while (pindex->pprev && pindex->nHeight % nIntervalLocal != 0 && pindex->nBits == nProofOfWorkLimit)
-                    pindex = pindex->pprev;
-                return pindex->nBits;
+                // If the new block's timestamp is more than 2* 10 minutes
+                // then allow mining of a min-difficulty block.
+                if (pblock->nTime > pindexLast->nTime + nTargetSpacing*2)
+                    return nProofOfWorkLimit;
+                else
+                {
+                    // Return the last non-special-min-difficulty-rules-block
+                    const CBlockIndex* pindex = pindexLast;
+                    while (pindex->pprev && pindex->nHeight % nIntervalLocal != 0 && pindex->nBits == nProofOfWorkLimit)
+                        pindex = pindex->pprev;
+                    return pindex->nBits;
+                }
             }
-        }
 
-        return pindexLast->nBits;
+            return pindexLast->nBits;
+        }
     }
 
     // Catcoin: This fixes an issue where a 51% attack can change difficulty at will.
@@ -2190,7 +2194,7 @@ bool CBlock::AcceptBlock(CValidationState &state, CDiskBlockPos *dbp)
 
         // Check proof of work
         if (nBits != GetNextWorkRequired(pindexPrev, this))
-            return state.DoS(100, error("AcceptBlock() : incorrect proof of work"));
+            return state.DoS(100, error("AcceptBlock(height=%d) : incorrect proof of work", nHeight));
 
         // Check timestamp against prev
         if (GetBlockTime() <= pindexPrev->GetMedianTimePast())
