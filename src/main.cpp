@@ -1112,6 +1112,11 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     int64 nTargetTimespanLocal = 0;
     int64 nIntervalLocal = 0;
     int forkBlock = 20290 - 1;
+    int fork2Block = 99999; // Um yeah, make this a little more general - hozer
+    if(fTestNet){
+        forkBlock = -1;
+	fork2Block = 36;
+    }
 
     unsigned int nProofOfWorkLimit = bnProofOfWorkLimit.GetCompact();
 
@@ -1136,27 +1141,30 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
         nIntervalLocal = nInterval;
     }
 
-    // Only change once per interval
-    if ((pindexLast->nHeight+1) % nIntervalLocal != 0)
-    {
-        // Special difficulty rule for testnet:
-        if (fTestNet)
+    // after fork2Block we retarget every block   
+    if(pindexLast->nHeight < fork2Block){
+        // Only change once per interval
+        if ((pindexLast->nHeight+1) % nIntervalLocal != 0)
         {
-            // If the new block's timestamp is more than 2* 10 minutes
-            // then allow mining of a min-difficulty block.
-            if (pblock->nTime > pindexLast->nTime + nTargetSpacing*2)
-                return nProofOfWorkLimit;
-            else
+            // Special difficulty rule for testnet:
+            if (fTestNet)
             {
-                // Return the last non-special-min-difficulty-rules-block
-                const CBlockIndex* pindex = pindexLast;
-                while (pindex->pprev && pindex->nHeight % nIntervalLocal != 0 && pindex->nBits == nProofOfWorkLimit)
-                    pindex = pindex->pprev;
-                return pindex->nBits;
+                // If the new block's timestamp is more than 2* 10 minutes
+                // then allow mining of a min-difficulty block.
+                if (pblock->nTime > pindexLast->nTime + nTargetSpacing*2)
+                    return nProofOfWorkLimit;
+                else
+                {
+                    // Return the last non-special-min-difficulty-rules-block
+                    const CBlockIndex* pindex = pindexLast;
+                    while (pindex->pprev && pindex->nHeight % nIntervalLocal != 0 && pindex->nBits == nProofOfWorkLimit)
+                        pindex = pindex->pprev;
+                    return pindex->nBits;
+                }
             }
-        }
 
-        return pindexLast->nBits;
+            return pindexLast->nBits;
+        }
     }
 
     // Catcoin: This fixes an issue where a 51% attack can change difficulty at will.
@@ -1172,12 +1180,20 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     assert(pindexFirst);
 
     // Limit adjustment step
+    int numerator = 4;
+    int denominator = 1;
+    if(pindexLast->nHeight >= fork2Block){
+        numerator = 112;
+        denominator = 100;
+    }
     int64 nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
+    int64 lowLimit = nTargetTimespanLocal*denominator/numerator;
+    int64 highLimit = nTargetTimespanLocal*numerator/denominator;
     printf("  nActualTimespan = %"PRI64d"  before bounds\n", nActualTimespan);
-    if (nActualTimespan < nTargetTimespanLocal/4)
-        nActualTimespan = nTargetTimespanLocal/4;
-    if (nActualTimespan > nTargetTimespanLocal*4)
-        nActualTimespan = nTargetTimespanLocal*4;
+    if (nActualTimespan < lowLimit)
+        nActualTimespan = lowLimit;
+    if (nActualTimespan > highLimit)
+        nActualTimespan = highLimit;
 
     // Retarget
     CBigNum bnNew;
@@ -2190,7 +2206,7 @@ bool CBlock::AcceptBlock(CValidationState &state, CDiskBlockPos *dbp)
 
         // Check proof of work
         if (nBits != GetNextWorkRequired(pindexPrev, this))
-            return state.DoS(100, error("AcceptBlock() : incorrect proof of work"));
+            return state.DoS(100, error("AcceptBlock(height=%d) : incorrect proof of work", nHeight));
 
         // Check timestamp against prev
         if (GetBlockTime() <= pindexPrev->GetMedianTimePast())
@@ -2747,12 +2763,12 @@ void UnloadBlockIndex()
 bool LoadBlockIndex()
 {
     if (fTestNet)
-    {
-        pchMessageStart[0] = 0xfc;
-        pchMessageStart[1] = 0xc1;
-        pchMessageStart[2] = 0xb7;
-        pchMessageStart[3] = 0xdc;
-        hashGenesisBlock = uint256("0xf5ae71e26c74beacc88382716aced69cddf3dffff24f384e1808905e0188f68f");
+    {	/* add 1 to litecoin values (3 to bitcoins) */
+        pchMessageStart[0] = 0xfd;
+        pchMessageStart[1] = 0xcb;
+        pchMessageStart[2] = 0xb8;
+        pchMessageStart[3] = 0xdd;
+        hashGenesisBlock = uint256("0xec7987a2ab5225246c5cf9b8d93b4b75bcef383a4a65d5a265bc09ed54006188");
     }
 
     //
@@ -2803,8 +2819,8 @@ bool InitBlockIndex() {
 
         if (fTestNet)
         {
-            block.nTime    = 1317798646;
-            block.nNonce   = 385270584;
+            block.nTime    = 1387838303; //FIXME testnet0.1
+            block.nNonce   = 608937;
         }
 
         //// debug print
@@ -2813,6 +2829,9 @@ bool InitBlockIndex() {
         printf("%s\n", hashGenesisBlock.ToString().c_str());
         printf("%s\n", block.hashMerkleRoot.ToString().c_str());
         assert(block.hashMerkleRoot == uint256("0x4007a33db5d9cdf2aab117335eb8431c8d13fb86e0214031fdaebe69a0f29cf7"));
+        /*
+        "but if they forget to ..."
+			marketing said "it runs, Ship it!" */
         block.print();
         assert(hash == hashGenesisBlock);
 
