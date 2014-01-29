@@ -1112,7 +1112,7 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     int64 nTargetTimespanLocal = 0;
     int64 nIntervalLocal = 0;
     int forkBlock = 20290 - 1;
-    int fork2Block = 99999; // Um yeah, make this a little more general - hozer
+    int fork2Block = 21346;
     if(fTestNet){
         forkBlock = -1;
 	fork2Block = 36;
