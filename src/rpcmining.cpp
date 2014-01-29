@@ -59,7 +59,7 @@ std::string roundTwo(double number) {
 	return ss.str();
 }
 std::string GetFormattedNetworkHashPS() {
-	double hashPs = (GetNetworkHashPS(120, -1).get_int64() / 1000);
+	double hashPs = (GetNetworkHashPS(36, -1).get_int64() / 1000);
 
 	if(hashPs < 1000)
 		return roundTwo(hashPs) + " kH/s";
@@ -81,11 +81,11 @@ Value getnetworkhashps(const Array& params, bool fHelp)
     if (fHelp || params.size() > 2)
         throw runtime_error(
             "getnetworkhashps [blocks] [height]\n"
-            "Returns the estimated network hashes per second based on the last 120 blocks.\n"
+            "Returns the estimated network hashes per second based on the last 36 blocks.\n"
             "Pass in [blocks] to override # of blocks, -1 specifies since last difficulty change.\n"
             "Pass in [height] to estimate the network speed at the time when a certain block was found.");
 
-    return GetNetworkHashPS(params.size() > 0 ? params[0].get_int() : 120, params.size() > 1 ? params[1].get_int() : -1);
+    return GetNetworkHashPS(params.size() > 0 ? params[0].get_int() : 36, params.size() > 1 ? params[1].get_int() : -1);
 }
 
 
