@@ -307,7 +307,7 @@ SOURCES += src/qt/bitcoin.cpp \
     src/txdb.cpp \
     src/qt/splashscreen.cpp
 
-RESOURCES += src/qt/bitcoin.qrc
+RESOURCES += src/qt/catcoin.qrc
 
 FORMS += src/qt/forms/sendcoinsdialog.ui \
     src/qt/forms/coincontroldialog.ui \
